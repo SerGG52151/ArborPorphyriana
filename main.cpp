@@ -229,6 +229,79 @@ void build_sample_animals(Arbor& A){
     A.connect_parent_child("bird", "chicken");
 }
 
+void build_sample_animals(Arbor& A){
+    A.connect_parent_child("substance", "body");
+    A.connect_parent_child("substance", "incorporeal");   // optional sibling
+
+    // Body splits
+    A.connect_parent_child("body", "living");
+    A.connect_parent_child("body", "non_living");
+
+    // Living splits
+    A.connect_parent_child("living", "animal");
+    A.connect_parent_child("living", "plant");
+
+    // Animal splits by differentia
+    A.connect_parent_child("animal", "rational_animal");
+    A.connect_parent_child("animal", "irrational_animal");
+
+    // Species under rational animal
+    A.connect_parent_child("rational_animal", "man");
+    A.connect_parent_child("rational_animal", "immortal_rational_animal");
+    // (You could add "immortal_rational_animal" here if you want the classic ladder)
+
+    // Individuals under man
+    A.connect_parent_child("man", "Plato");
+    A.connect_parent_child("man", "Socrates");
+    A.connect_parent_child("man", "Aristotle");
+
+    // A few species under irrational animal (for contrast)
+    A.connect_parent_child("irrational_animal", "equine");
+    A.connect_parent_child("irrational_animal", "canine");
+    A.connect_parent_child("irrational_animal", "bird");
+    // Kinds of bird
+    //A.connect_parent_child("bird", "non-domestic");
+    //A.connect_parent_child("bird", "domestic");
+    // An example of bird
+    A.connect_parent_child("bird", "chicken");
+}
+
+
+void build_sample_students(Arbor& A){
+    A.connect_parent_child("Ser_viviente", "Humano");
+    A.connect_parent_child("Ser_viviente", "Animal");
+
+    A.connect_parent_child("Animal", "Perro");
+    A.connect_parent_child("Animal", "Gato");
+
+    A.connect_parent_child("Humano", "Muerto");
+    A.connect_parent_child("Humano", "Vivo");
+
+    A.connect_parent_child("Muerto", "En_paz");
+    A.connect_parent_child("Muerto", "Fantasma");
+
+    A.connect_parent_child("Vivo", "Profesor");
+    A.connect_parent_child("Vivo", "Estudiante");
+
+    A.connect_parent_child("Profesor", "Catedra");
+    A.connect_parent_child("Profesor", "Tiempo_completo");
+
+    A.connect_parent_child("Estudiante", "Licenciatura");
+    A.connect_parent_child("Estudiante", "Ingenieria");
+
+    A.connect_parent_child("Licenciatura", "Negocios");
+    A.connect_parent_child("Negocios", "Jefe");
+
+    A.connect_parent_child("Ingenieria", "ITC");
+    A.connect_parent_child("Ingenieria", "IRS");
+    A.connect_parent_child("Ingenieria", "ITD");
+
+    A.connect_parent_child("ITC", "Desvelado");
+    A.connect_parent_child("ITC", "No_Desvelado");
+}
+
+
+
 // Synthetic N-level Porphyrian-style tree with branching factor B.
 void build_synthetic_porhyry(Arbor& A, int levels, int B){
     if (levels <= 0) return;
@@ -313,7 +386,8 @@ int main(){
 
     // --- Measure build time for the sample animal taxonomy ---
     auto t_build0 = high_resolution_clock::now();
-    build_sample_animals(arbor);
+    //build_sample_animals(arbor);
+    build_sample_students(arbor);
     auto t_build1 = high_resolution_clock::now();
     auto build_us = duration_cast<microseconds>(t_build1 - t_build0).count();
 
