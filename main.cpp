@@ -166,6 +166,34 @@ struct Arbor {
         return path;
     }
 
+    // Find shortest path with dfs
+    vector<int> shortest_path_dfs(const string& a, const string& b){
+        auto ita = id_of.find(a), itb = id_of.find(b);
+        if (ita == id_of.end() || itb == id_of.end()) return {};
+        int s = ita->second, t = itb->second;
+        vector<int> path, result;
+        vector<bool> visited(label_of.size(), false);
+
+        // Lambda dfs
+        function<bool(int)> dfs = [&](int u) {
+            path.push_back(u);
+            visited[u] = true;
+            if (u == t) {
+                result = path;
+                return true;
+            }
+            for (int v : adj[u]) {
+                if (!visited[v]) {
+                    if (dfs(v)) return true;
+                }
+            }
+            path.pop_back();
+            return false;
+        };
+        dfs(s);
+        return result;
+    }
+
     void dump_veb_view() const {
         cout << "\n--- VEB View (U=" << U << ") ---\n";
         vector<int> keys; veb->enumerate(keys);
@@ -339,6 +367,22 @@ void emit_graphviz(const Arbor& A, const string& filename){
     cerr << "[graphviz] wrote " << filename << " (render with: dot -Tpng " << filename << " -o porphyry.png)\n";
 }
 
+// Render a Graphviz DOT file into an image using the `dot` tool.
+// Returns true on success, false on failure.
+bool render_graphviz(const string& dotfile, const string& outfile){
+    // Build command and run via system(). Using quotes to handle spaces in paths.
+    string cmd = "dot -Tpng \"" + dotfile + "\" -o \"" + outfile + "\"";
+    int rc = std::system(cmd.c_str());
+    if (rc != 0){
+        cerr << "[graphviz] rendering failed (exit=" << rc << "): " << cmd << "\n";
+        return false;
+    }
+    cerr << "[graphviz] rendered " << outfile << "\n";
+    return true;
+}
+
+
+
 int main(){
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
@@ -363,17 +407,22 @@ int main(){
 
     // --- Graphviz DOT output ---
     emit_graphviz(arbor, "porphyry.dot");
+    
+    // Attempt to render the DOT file to PNG (requires Graphviz `dot` in PATH).
+    render_graphviz("porphyry.dot", "porphyry.png");
 
     // --- Measure Dijkstra time for a sample query ---
+    string node1 = "Ingenieria";
+    string node2 = "Gato";
     auto t_d0 = high_resolution_clock::now();
-    auto path = arbor.shortest_path("Plato", "chicken");
+    auto path = arbor.shortest_path_dfs(node1, node2);
     auto t_d1 = high_resolution_clock::now();
     auto dijk_us = duration_cast<microseconds>(t_d1 - t_d0).count();
 
     if (path.empty()) {
-        cout << "\nNo path found between Plato and a featherless chicken\n";
+        cout << "\nNo path found between " << node1 << " and " << node2 << endl;
     } else {
-        cout << "\nShortest path (Plato -> chicken):\n  " << join_labels(path, arbor.label_of) << "\n";
+        cout << "\nShortest path (" << node1 << " -> " << node2 << "):\n" << join_labels(path, arbor.label_of) << "\n";
         int edges = (int)path.size() - 1;
         int nodes_between = max(0, (int)path.size() - 2);
         cout << "Edges (hops): " << edges << "\n";
