@@ -1,0 +1,12 @@
+Using the code base provided we proposed a new tree. The runtime resulting from running the shortest path function
+already implemented was higher than the original provided tree. This is most likely due to the size of the tree, 
+as there were a few more nodes than in the original tree. 
+
+The algorithm we implemented was a dfs with backtracking that explored the tree and returned the path that connected
+the two indicated nodes. It treats the tree as a graph, and since theres only one path between any two nodes in a tree
+the result is always the shortest path.
+
+Based on today's philosophy this approach could seen as valid ain order to know how distant humans are from animals. 
+The porphyry classifies its nodes under progressively more specific definitions of what they are, this is something that
+is still done to classify animals through evolution or phylogenetic tree representations. It still is a good way to visualize
+the relationship between living beings.
